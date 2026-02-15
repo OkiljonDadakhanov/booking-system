@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Build
+dist/
+.next/
+out/
+
+# Prisma
+apps/api/prisma/migrations/
+
+# IDE & Agents
+.vscode/
+.idea/
+.cursor/
+.claude/
+.agents/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
