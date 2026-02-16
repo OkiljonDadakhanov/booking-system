@@ -30,10 +30,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
             exception.message;
     }
 
-    response.status(status).json({
-      statusCode: status,
-      message: Array.isArray(message) ? message : [message],
-      timestamp: new Date().toISOString(),
-    });
+    if (!response.headersSent) {
+      response.status(status).json({
+        statusCode: status,
+        message: Array.isArray(message) ? message : [message],
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 }
