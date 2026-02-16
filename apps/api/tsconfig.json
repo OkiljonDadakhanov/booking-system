@@ -18,5 +18,5 @@
     "noImplicitReturns": true,
     "esModuleInterop": true
   },
-  "include": ["src/**/*", "prisma/**/*"]
+  "include": ["src/**/*"]
 }

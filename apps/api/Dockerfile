@@ -1,9 +1,13 @@
 FROM node:20-alpine
 
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
 COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+COPY scripts/package.json ./scripts/
 
 RUN npm install --workspace=apps/api
 
