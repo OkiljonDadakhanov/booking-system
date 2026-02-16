@@ -70,11 +70,13 @@ This starts PostgreSQL, the API (port 3001), and the web app (port 3000). Migrat
 
 ### Seed Data
 
-| User | Email | Password |
-|------|-------|----------|
-| Alice Johnson | alice@example.com | Password123 |
-| Bob Smith | bob@example.com | Password123 |
-| Charlie Brown | charlie@example.com | Password123 |
+| User | Email |
+|------|-------|
+| Alice Johnson | alice@example.com |
+| Bob Smith | bob@example.com |
+| Charlie Brown | charlie@example.com |
+
+Seed user password is set via the `SEED_USER_PASSWORD` environment variable in `.env`.
 
 Events include a **"Limited Concert"** with only 2 tickets for concurrency testing.
 

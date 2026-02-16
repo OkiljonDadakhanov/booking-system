@@ -1,6 +1,12 @@
 import axios, { AxiosError } from 'axios';
 
 const API_URL = process.env.API_URL || 'http://localhost:3001';
+const TEST_PASSWORD = process.env.TEST_PASSWORD;
+
+if (!TEST_PASSWORD) {
+  console.error('ERROR: TEST_PASSWORD environment variable is required');
+  process.exit(1);
+}
 
 interface AuthResponse {
   user: { id: string; email: string; name: string };
@@ -20,7 +26,7 @@ async function registerUser(
   index: number,
 ): Promise<{ token: string; email: string }> {
   const email = `testuser${index}_${Date.now()}@example.com`;
-  const password = 'TestPass123';
+  const password = TEST_PASSWORD!;
   const name = `Test User ${index}`;
 
   try {

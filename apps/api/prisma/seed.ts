@@ -4,13 +4,18 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
+  const seedPassword = process.env.SEED_USER_PASSWORD;
+  if (!seedPassword) {
+    throw new Error('SEED_USER_PASSWORD environment variable is required');
+  }
+
   // Clean existing data
   await prisma.booking.deleteMany();
   await prisma.event.deleteMany();
   await prisma.user.deleteMany();
 
   // Create users
-  const hashedPassword = await bcrypt.hash('Password123', 10);
+  const hashedPassword = await bcrypt.hash(seedPassword, 10);
 
   const users = await Promise.all([
     prisma.user.create({
