@@ -130,6 +130,44 @@ PASS: Concurrency control working correctly!
   - Remaining tickets is 0 (no overselling)
 ```
 
+## Bugs Fixed & Improvements
+
+### Backend Fixes
+- **UUID casting in raw SQL**: Fixed `SELECT ... FOR UPDATE` query to properly cast UUID types (`id::text = ${eventId}`)
+- **Prisma serialization errors**: Wrapped transactions in try/catch, converting Prisma serialization failures to proper 409 responses instead of 500
+- **Exception filter crash**: Added `headersSent` guard to prevent `ERR_HTTP_HEADERS_SENT` crash when response was already sent
+- **Cookie-parser import**: Fixed TypeScript import for `cookie-parser` (default vs namespace import)
+- **Environment variable loading**: Added early `dotenv` loading in `main.ts` for monorepo `.env` resolution before NestJS boots
+
+### Frontend Fixes
+- **Auth race condition**: Added `initialized` flag to auth store — dashboard now waits for auth to be restored before rendering children, preventing `fetchBookings()` from firing before access token is available
+- **Client-side auth redirect**: Dashboard layout redirects to `/login` after auth check if user is not authenticated
+- **WebSocket gated on auth**: WebSocket connection now only establishes after successful authentication
+- **Event refresh after booking**: `fetchEvents()` is called after booking as a fallback in case WebSocket update doesn't reach the client
+- **Error handling in fetchBookings**: Added `catch` block to prevent unhandled promise rejections
+- **WebSocket reconnection**: Added explicit transports (`websocket`, `polling`), reconnection with 10 retry attempts, and connection error logging
+
+### Docker Fixes
+- **Prisma OpenSSL on Alpine**: Added `apk add --no-cache openssl` to API Dockerfile
+- **npm workspace install**: All workspace `package.json` files are now copied into each Dockerfile
+- **TypeScript output nesting**: Fixed `tsconfig.json` to only include `src/**/*`, preventing `dist/src/main.js` nesting
+- **NEXT_PUBLIC_API_URL**: Changed from Docker internal DNS (`http://api:3001`) to browser-accessible `http://localhost:3001`
+
+### Concurrency Test Results
+```
+=== RESULTS ===
+  SUCCESS (200): 2
+  FAILED  (409): 8
+
+=== VERIFICATION ===
+  Remaining tickets: 0
+  Expected successes: 2, Actual: 2
+  Expected failures: 8, Actual: 8
+
+=== FINAL VERDICT ===
+  PASS: Concurrency control working correctly!
+```
+
 ## Project Structure
 
 ```

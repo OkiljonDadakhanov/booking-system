@@ -13,19 +13,21 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout, refresh } = useAuthStore();
+  const { user, isAuthenticated, initialized, logout, refresh } = useAuthStore();
 
   useEffect(() => {
     // Try to restore auth state on mount
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !initialized) {
       refresh();
     }
-  }, [isAuthenticated, refresh]);
+  }, [isAuthenticated, initialized, refresh]);
 
   useEffect(() => {
-    connectSocket();
-    return () => disconnectSocket();
-  }, []);
+    if (isAuthenticated) {
+      connectSocket();
+      return () => disconnectSocket();
+    }
+  }, [isAuthenticated]);
 
   const handleLogout = async () => {
     await logout();
@@ -36,6 +38,21 @@ export default function DashboardLayout({
     { href: '/events', label: 'Events' },
     { href: '/bookings', label: 'My Bookings' },
   ];
+
+  // Wait for auth to be initialized before rendering children
+  if (!initialized) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated after initialization
+  if (!isAuthenticated) {
+    router.push('/login');
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Event } from '@/store/event-store';
+import { Event, useEventStore } from '@/store/event-store';
 import { useBookingStore, Booking } from '@/store/booking-store';
 import { TicketBadge } from './ticket-badge';
 import toast from 'react-hot-toast';
@@ -13,6 +13,7 @@ interface EventCardProps {
 
 export function EventCard({ event, userBookings }: EventCardProps) {
   const { createBooking } = useBookingStore();
+  const { fetchEvents } = useEventStore();
   const [bookingLoading, setBookingLoading] = useState(false);
 
   const existingBooking = userBookings.find(
@@ -34,6 +35,8 @@ export function EventCard({ event, userBookings }: EventCardProps) {
     setBookingLoading(true);
     try {
       await createBooking(event.id);
+      // Refresh events to get updated remaining tickets (fallback for WebSocket)
+      fetchEvents();
       toast.success(`Successfully booked ${event.title}!`);
     } catch (err: unknown) {
       const error = err as {

@@ -11,6 +11,7 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
+  initialized: boolean;
   loading: boolean;
   setAuth: (user: User, accessToken: string) => void;
   clearAuth: () => void;
@@ -24,6 +25,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   accessToken: null,
   isAuthenticated: false,
+  initialized: false,
   loading: false,
 
   setAuth: (user, accessToken) =>
@@ -40,6 +42,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: res.data.user,
         accessToken: res.data.accessToken,
         isAuthenticated: true,
+        initialized: true,
       });
     } finally {
       set({ loading: false });
@@ -54,6 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: res.data.user,
         accessToken: res.data.accessToken,
         isAuthenticated: true,
+        initialized: true,
       });
     } finally {
       set({ loading: false });
@@ -75,9 +79,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: res.data.user,
         accessToken: res.data.accessToken,
         isAuthenticated: true,
+        initialized: true,
       });
     } catch {
-      set({ user: null, accessToken: null, isAuthenticated: false });
+      set({ user: null, accessToken: null, isAuthenticated: false, initialized: true });
     }
   },
 }));

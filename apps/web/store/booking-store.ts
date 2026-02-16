@@ -28,6 +28,8 @@ export const useBookingStore = create<BookingState>((set) => ({
     try {
       const res = await api.get('/bookings');
       set({ bookings: res.data });
+    } catch {
+      // Silently handle - bookings will show as empty until auth is ready
     } finally {
       set({ loading: false });
     }

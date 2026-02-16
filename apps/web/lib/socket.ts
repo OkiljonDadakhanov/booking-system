@@ -7,18 +7,29 @@ export function connectSocket() {
   if (socket?.connected) return;
 
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  socket = io(url, { withCredentials: true });
+  socket = io(url, {
+    withCredentials: true,
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionAttempts: 10,
+    reconnectionDelay: 1000,
+  });
 
   socket.on('connect', () => {
-    console.log('WebSocket connected');
+    console.log('WebSocket connected:', socket?.id);
   });
 
   socket.on('ticketUpdate', (data: { eventId: string; remainingTickets: number }) => {
+    console.log('Ticket update received:', data);
     useEventStore.getState().updateTicketCount(data.eventId, data.remainingTickets);
   });
 
-  socket.on('disconnect', () => {
-    console.log('WebSocket disconnected');
+  socket.on('connect_error', (err) => {
+    console.log('WebSocket connection error:', err.message);
+  });
+
+  socket.on('disconnect', (reason) => {
+    console.log('WebSocket disconnected:', reason);
   });
 }
 
